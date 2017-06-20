@@ -102,7 +102,7 @@ char lowl_cur_step_left(LOWL *list){
 				b=a;
 				a=list->beg;
 			}	
-		}					// v b je predchadzajuci
+		}					
 		return LOWL_SUCCESS;
 	}
 	
