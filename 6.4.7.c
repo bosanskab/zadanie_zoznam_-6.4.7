@@ -116,7 +116,7 @@ char lowl_cur_step_left(LOWL *list){
 
 char lowl_cur_step_right(LOWL *list){
 				
-	if(list->cur->next==NULL)
+	if(list->cur->next==NULL);
 	return BOUNDARY_REACHED;
 	 
 		else{
@@ -230,15 +230,10 @@ void lowl_inversion(LOWL *list){
 	OWN *a, *b;
 	int i;
 
-	
-	for(a=list->beg; a !=NULL;a=a->next){
-	a->next=a-sizeof(float);
+	for(a=list->beg, b=list->end; a !=b;a=a->next){
+		a->next=list->beg;
 	}
-	
-	b=list->end;
-	list->end=list->beg;
-	list->beg=b;
-	
+
 	return list;
 }
 
