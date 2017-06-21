@@ -93,7 +93,7 @@ char lowl_cur_step_left(LOWL *list){
 	OWN *a, *b;
 	
 	if (list->cur==list->beg)
-//	return BOUNDARY_REACHED;
+	return BOUNDARY_REACHED;
 	
 	if(list->cur->next != NULL){
 		for(b=list->cur,a=list->cur->next; a!=list->cur;b=a,a=a->next){
@@ -102,26 +102,26 @@ char lowl_cur_step_left(LOWL *list){
 				a=list->beg;
 			}	
 		}					
-//		return LOWL_SUCCESS;
+		return LOWL_SUCCESS;
 	}
 	
 	if(list->cur->next==NULL){
 		for(a=list->cur,b=list->beg; b!=list->cur; a=b,b=b->next){	
  		}
  		list->cur = a;
- //		return LOWL_SUCCESS;
+ 	return LOWL_SUCCESS;
 	}
 }
 
 char lowl_cur_step_right(LOWL *list){
 				
 	if(list->cur->next==NULL);
-//	return BOUNDARY_REACHED;
+	return BOUNDARY_REACHED;
 	 
-//		else{
+		else{
 			list->cur=list->cur->next;
-//			return LOWL_SUCCESS;	
-//	}	 
+			return LOWL_SUCCESS;	
+	}	 
 }
 
 
@@ -242,7 +242,7 @@ void lowl_inversion(LOWL *list){
 	list->cur=c;
 	}
 	return list;
-}		
+}	
 
 int main(){	
 	srand(time(NULL));
