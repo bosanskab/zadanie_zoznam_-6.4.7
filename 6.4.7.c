@@ -226,22 +226,21 @@ int lowl_delete(LOWL* list){
 
 
 void lowl_inversion(LOWL *list){
-	OWN *a, *b, *c;
+	OWN *a, *b;
 	int i;
 
 	if(list->beg->next==NULL){
 	return list;
 	}
 	
-	if(list->beg->next!=NULL){
-	c=list->cur;	
-		for(a=list->beg, b=list->beg->next; a->next !=NULL ;a=a->next,b=b->next){
+	if(list->beg->next!=NULL){	
+		for(a=list->beg, b=list->beg->next; b->next !=NULL ;b=b->next){
+			if (b==list->beg->next)
 			b->next=a;
-			
+				else b->next=b;	
 		}
-	list->cur=c;
-	}
 	return list;
+	}
 }	
 
 int main(){	
