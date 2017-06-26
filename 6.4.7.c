@@ -6,6 +6,9 @@
 #include <sys/stat.h>
 #include <fcntl.h>
 
+#define BOUNDARY_REACHED 
+#define LOWL_SUCCESS 
+
 typedef struct OWN{  
 	float data;
 	struct OWN *next;
@@ -37,11 +40,14 @@ LOWL *lowl_create_random(unsigned int size){
   	uzol=NULL;
   	if(( uzol=malloc(sizeof(OWN)))==NULL) 
 	  return NULL;
+	  
   	uzol->data=rand()%10;
   	uzol->next=NULL;
 	  	
   	list=NULL;
-  	list=malloc(sizeof(LOWL));
+  	if((list=malloc(sizeof(LOWL)))==NULL)
+  		return NULL;
+  	
   	list->beg=uzol;
   	list->cur=uzol;
   	
@@ -63,63 +69,53 @@ LOWL *lowl_create_random(unsigned int size){
 
 
 void *lowl_destroy(LOWL *list){						
-	OWN *p;
+	OWN *a;
 	
 	list->cur = list->beg;
 	
 	while(list->cur->next != NULL){
-		p = list->cur->next;
+		a=list->cur->next;
 		free(list->cur);
-		list->cur = p;
+		list->cur = a;
 	}
 	free(list->cur);
 	free(list);
 }
 
 void lowl_print(LOWL *list){
-	OWN *p;
+	OWN *a;
 	
-	for(p=list->beg; p != NULL; p=p->next){
-		if(p == list->cur)
-		printf("(%d) ",p->data);
-		else{
-			printf("%d ",p->data);
+	for(a=list->beg; a != NULL; a=a->next){
+		if(a==list->cur)
+		printf("(%d) ",a->data);
+			else{
+			printf("%d ",a->data);
 		}
 	}
-		printf("\n ");
+	printf("\n ");
 }
 
 char lowl_cur_step_left(LOWL *list){
 	OWN *a, *b;
 	
 	if (list->cur==list->beg)
-	return BOUNDARY_REACHED;
+		return BOUNDARY_REACHED;
 	
-	if(list->cur->next != NULL){
-		for(b=list->cur,a=list->cur->next; a!=list->cur;b=a,a=a->next){
-			if(a->next==NULL){
-				b=a;
-				a=list->beg;
-			}	
-		}					
-		return LOWL_SUCCESS;
-	}
-	
-	if(list->cur->next==NULL){
+	else{
 		for(a=list->cur,b=list->beg; b!=list->cur; a=b,b=b->next){	
- 		}
  		list->cur = a;
- 	return LOWL_SUCCESS;
+ 		}	
+ 		return LOWL_SUCCESS;
 	}
 }
 
 char lowl_cur_step_right(LOWL *list){
 				
-	if(list->cur->next==NULL);
-	return BOUNDARY_REACHED;
+	if(list->cur->next==NULL)
+		return BOUNDARY_REACHED;
 	 
 		else{
-			list->cur=list->cur->next;
+		list->cur=list->cur->next;
 			return LOWL_SUCCESS;	
 	}	 
 }
@@ -130,19 +126,25 @@ OWN *lowl_insert_left(LOWL* list, float val){
 
 	if(list->cur==list->beg){													
 		if( (list->cur==NULL) && (list->beg==NULL)){
+				if(( a = malloc(sizeof(OWN))) == NULL)
+					return 0;
 			a->data=val;	
 			list->cur=a;
 			list->beg=list->cur;
 			list->beg->next=NULL;
+			
 			return a;
 		}
 		
-		b=list->beg;	
+		b=list->beg;
+		if ((a = malloc(sizeof(OWN)))==NULL)
+			return NULL;	
 		a->data=val;
 	
 		a->next=b;
 		list->beg=a;
 		list->cur=b;
+		
 		return a;	
 	}
 	
@@ -150,10 +152,13 @@ OWN *lowl_insert_left(LOWL* list, float val){
 		d=list->cur;	
 		lowl_cur_step_left(list);
 		
+		if(( list->cur->next = malloc(sizeof(OWN))) == NULL) 
+			return NULL;
 		list->cur->next->data=val;
 		c=list->cur->next;
 		list->cur=d;
 		c->next=d;
+		
 		return c;
 	}
 		
@@ -162,10 +167,14 @@ OWN *lowl_insert_left(LOWL* list, float val){
 OWN *lowl_insert_right(LOWL* list, float val){	
 	OWN *a, *b;
 	
+	if((a = malloc(sizeof(OWN))) == NULL) 
+		return NULL;
+		
 	if( (list->cur->next==NULL) && (list->cur==list->beg)){			
 		a->data=val;
 		list->cur->next=a;
 		a->next=NULL;
+		
 		return a;
 	}
 	
@@ -174,9 +183,9 @@ OWN *lowl_insert_right(LOWL* list, float val){
 		a->data=val;
 		list->cur->next=a;
 		a->next=b;
+		
 		return a;		
 	}
-
 	return a;	
 }
 
@@ -188,16 +197,16 @@ int lowl_delete(LOWL* list){
 	data=list->cur->data;
 	a=list->cur; 
 	
-	if( (list->cur->next==NULL) && (list->cur==list->beg) ){
-		free(a);
-		list->cur=NULL;
+	if(list->beg->next==NULL){
+		data= NULL;
+		
 		return data;
 	}
 	
 	if(list->cur==list->beg){												
 		list->beg=list->cur->next;
-		list->cur=list->beg;
 		free(a);
+		list->cur=list->beg;
 		
 		return data;
 	}
@@ -215,7 +224,6 @@ int lowl_delete(LOWL* list){
 	if(list->cur->next==NULL){		
 		lowl_cur_step_left(list);
 		b=list->cur;
-		list->cur=b;
 		b->next=NULL;
 		free(a);
 		
@@ -226,18 +234,21 @@ int lowl_delete(LOWL* list){
 
 
 void lowl_inversion(LOWL *list){
-	OWN *a, *b;
+	OWN *a, *b, *c, *d;
 	int i;
-
+	
+	if (list->cur==NULL){
+		return NULL;
+	}
+	
 	if(list->beg->next==NULL){
-	return list;
+		return list;
 	}
 	
 	if(list->beg->next!=NULL){	
-		for(a=list->beg, b=list->beg->next; b->next !=NULL ;b=b->next){
-			if (b==list->beg->next)
-			b->next=a;
-				else b->next=b;	
+		for(a=list->beg->next, b=a->next; a=NULL ;a=b,b=b->next){
+			c=list->beg;
+			a->next=c;
 		}
 	return list;
 	}
