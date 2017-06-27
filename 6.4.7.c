@@ -96,16 +96,18 @@ void lowl_print(LOWL *list){
 }
 
 char lowl_cur_step_left(LOWL *list){
-	OWN *a, *b;
+	OWN *a, *b, *c;
 	
+	c=list->cur; 
+		
 	if (list->cur==list->beg)
 		return BOUNDARY_REACHED;
 	
-	else{
-		for(a=list->cur,b=list->beg; b!=list->cur; a=b,b=b->next){	
- 		list->cur = a;
- 		}	
- 		return LOWL_SUCCESS;
+		else{
+			for(a=list->cur,b=list->beg; b!=c; a=b,b=b->next){	
+ 			list->cur = a;
+ 			}	
+ 			return LOWL_SUCCESS;
 	}
 }
 
