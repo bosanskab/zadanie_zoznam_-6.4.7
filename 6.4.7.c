@@ -51,10 +51,10 @@ LOWL *lowl_create_random(unsigned int size){
   	list->beg=uzol;
   	list->cur=uzol;
   	
-   for(i=1; i<size; i++){	
-    	if(( uzol=malloc(sizeof(OWN)))==NULL) 
-			return NULL;
-    	
+	for(i=1; i<size; i++){
+   		if(( uzol=malloc(sizeof(OWN)))==NULL) 
+	  		return NULL;	
+   
 	    uzol->data=rand()%10;
 	    uzol->next=NULL;											
 	    
@@ -96,17 +96,18 @@ void lowl_print(LOWL *list){
 }
 
 char lowl_cur_step_left(LOWL *list){
-	OWN *a, *b, *c;
-	
-	c=list->cur; 
+	OWN *a, *b, *c; 
 		
 	if (list->cur==list->beg)
 		return BOUNDARY_REACHED;
 	
 		else{
-			for(a=list->cur,b=list->beg; b!=c; a=b,b=b->next){	
- 			list->cur = a;
- 			}	
+			for(b=list->cur,a=list->cur->next; a!=list->cur;b=a,a=a->next){	
+ 				if(a->next==NULL){
+ 					a=list->beg;
+ 				}
+ 				a=list->cur;
+		}
  			return LOWL_SUCCESS;
 	}
 }
@@ -140,9 +141,9 @@ OWN *lowl_insert_left(LOWL* list, float val){
 		
 		b=list->beg;
 		if ((a = malloc(sizeof(OWN)))==NULL)
-			return NULL;	
+			return NULL;
+				
 		a->data=val;
-	
 		a->next=b;
 		list->beg=a;
 		list->cur=b;
@@ -172,7 +173,7 @@ OWN *lowl_insert_right(LOWL* list, float val){
 	if((a = malloc(sizeof(OWN))) == NULL) 
 		return NULL;
 		
-	if( (list->cur->next==NULL) && (list->cur==list->beg)){			
+	if((list->cur->next==NULL) && (list->cur==list->beg)){			
 		a->data=val;
 		list->cur->next=a;
 		a->next=NULL;
@@ -199,7 +200,7 @@ int lowl_delete(LOWL* list){
 	data=list->cur->data;
 	a=list->cur; 
 	
-	if(list->beg->next==NULL){
+	if(list->cur->next==NULL){
 		data= NULL;
 		
 		return data;
